@@ -97,6 +97,7 @@ fetch('http://localhost:3000/api/products')
     }
 
 
+
       //Fenêtre qui confirme l'ajout des canapés dans le panier et qui permet de se rendre sur la page d'accueil en cliquant sur "Annuler" ou d'aller au panier en cliquant sur "OK"
     const validation = () => {
         if(window.confirm( `canapé: ${titre} couleur: ${selectedColor} quantité: ${selectedQuantity} a bien été ajouté au panier.
@@ -114,30 +115,32 @@ fetch('http://localhost:3000/api/products')
         localStorage.setItem("canapes", JSON.stringify(panierLocalStorage));
         validation()
     }
-    // Si des produits sont déjà présents dans localstorage
-    else if (panierLocalStorage != null) {
-        for (i = 0; i < panierLocalStorage.length; i++) {
-            // Si des canapés ayant le même id et la même couleur sont déjà présent dans le localStorage
-            if (panierLocalStorage[i]._id == id && panierLocalStorage[i].couleur == selectedColor) {
-                return(
-                    panierLocalStorage[i].quantite = parseInt(selectedQuantity) + parseInt(panierLocalStorage[i].quantite),
-                    localStorage.setItem("canapes", JSON.stringify(panierLocalStorage)),
-                    validation()
-                    )
+        // Si des produits sont déjà présents dans localstorage
+        else if (panierLocalStorage != null) {
+            for (i = 0; i < panierLocalStorage.length; i++) {
+                // Si des canapés ayant le même id et la même couleur sont déjà présent dans le localStorage
+                if (panierLocalStorage[i]._id == id && panierLocalStorage[i].couleur == selectedColor) {
+                    return(
+                        panierLocalStorage[i].quantite = parseInt(selectedQuantity) + parseInt(panierLocalStorage[i].quantite),
+                        localStorage.setItem("canapes", JSON.stringify(panierLocalStorage)),
+                        validation()
+                        )
+                    }
                 }
-            }
-        // Si des canapés ayant le même id ou la même couleur ne sont pas présents dans le localStorage
-        for (i = 0; i < panierLocalStorage.length; i++) {
-            //|| : une condition sur 2 est ok,  si id dans LS n'est pas de même couleur que le produit choisi//
-            if (panierLocalStorage[i]._id != id || panierLocalStorage[i].couleur != selectedColor) {
-                return(
-                    panierLocalStorage.push(selectedCanapeOption),
-                    localStorage.setItem("canapes", JSON.stringify(panierLocalStorage)),
-                    validation()
-                    )
-                }
-            }  
+            // Si des canapés ayant le même id ou la même couleur ne sont pas présents dans le localStorage
+            for (i = 0; i < panierLocalStorage.length; i++) {
+                //|| : une condition sur 2 est ok,  si id dans LS n'est pas de même couleur que le produit choisi//
+                if (panierLocalStorage[i]._id != id || panierLocalStorage[i].couleur != selectedColor) {
+                    return(
+                        panierLocalStorage.push(selectedCanapeOption),
+                        localStorage.setItem("canapes", JSON.stringify(panierLocalStorage)),
+                        validation()
+                        )
+                    }
+                }  
         }
     }
 })
     .catch(err => console.log("Erreur : " + err));
+
+// 로컬스토리지에 이미 존재하는 같은 아이템의 수량이 새로 추가 되는 같은 아이템의 수량의 합이 100이 넘을 경우, return 값을 alert null
