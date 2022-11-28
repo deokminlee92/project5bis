@@ -1,4 +1,6 @@
-//Requête API//
+            ////////////////////////////////////////////////////////////////
+            /////////////////////// Début Requête API //////////////////////
+            ////////////////////////////////////////////////////////////////
 fetch('http://localhost:3000/api/products/')
     .then(function (reponse) {
         if (reponse.ok) {
@@ -12,39 +14,49 @@ fetch('http://localhost:3000/api/products/')
             // Récupération du tableau créé dans product.html
             let produitDansLocalStorage = JSON.parse(localStorage.getItem("canapes"));
 
+                        ////////////////////////////////////////////////////////////////
+            /////////////////////// Fin Requête API //////////////////////
+            ////////////////////////////////////////////////////////////////
+
+
+
+            
+
             //***************************Affichage du prix du canapé ***************************//
 
+
             // Création du code html sous l'ID items pour afficher les canapés
-            // Déclaration des variables
+            // Déclaration globale des variables 
             let canapeList = '';
             let canape = '';
             let totalProductPrice = [];
+                // instruction for of permet de créer une boucle array qui parcourt un objet itérable et d'exécuter des instructions pour la valeur de chaque propriété
+                // on fait parcourir dans le tableau produitDansLocalStorage puis chaque élément on va injecter la description du produit
+                for (canape of produitDansLocalStorage) {
+                    canapeList += `<article class="cart__item" data-id="${canape._id}" data-color="${canape.couleur}">`;
+                    canapeList += '<div class="cart__item__img">';
+                    canapeList += `<img src="${canape.image}" alt="${canape.altImage}">`;
+                    canapeList += '</div>';
+                    canapeList += '<div class="cart__item__content">';
+                    canapeList += '<div class="cart__item__content__description">';
+                    canapeList += `<h2>${canape.titre}</h2>`;
+                    canapeList += `<p>${canape.couleur}</p>`;
 
-            for (canape of produitDansLocalStorage) {
-                canapeList += `<article class="cart__item" data-id="${canape._id}" data-color="${canape.couleur}">`;
-                canapeList += '<div class="cart__item__img">';
-                canapeList += `<img src="${canape.image}" alt="${canape.altImage}">`;
-                canapeList += '</div>';
-                canapeList += '<div class="cart__item__content">';
-                canapeList += '<div class="cart__item__content__description">';
-                canapeList += `<h2>${canape.titre}</h2>`;
-                canapeList += `<p>${canape.couleur}</p>`;
-
-
-                // Créer une variable pour créer un tableau vide //
+                //Affichage du prix 
+                // on crée un function pour afficher le prix du produit //
                 function affichagePriceCanape() {
-                    // Déclarer une variable
+                    // Déclarer une variable avec sans valeur
                     let priceCanapeEach = '';
-                    // Recherche du prix du canapé dans l'API//
+                    // Recherche du prix du canapé avec une boucle forte dans le tableau productInfo//
                     for (i = 0; i < productInfo.length; i++) {
-                        // Recherche le même produit id dans //
+                        // Recherche le même produit id  //
                         if (productInfo[i]._id === canape._id) {
                             //Créer une variable pour injecter le prix du canape correspondant//
-                            costCanape = productInfo[i].price;
-                            //Créer une variable pour injecter le prix//
+                            let costCanape = productInfo[i].price;
+                            //on remplace le code HTML en injectant le prix//
                             canapeList += `<p>${costCanape.toFixed(2)}€</p>`
                             // Calcul du prix total en faisant le produit de la quantité par le prix//
-                            //parseInt= transformer unechaîne de caractère en chiffre//
+                            //parseInt= transformer une chaîne de caractère en chiffre//
                             priceCanapeEach = parseInt(productInfo[i].price) * parseInt(canape.quantite);
                             totalProductPrice.push(priceCanapeEach);
                         }
@@ -52,13 +64,14 @@ fetch('http://localhost:3000/api/products/')
                 }
                 affichagePriceCanape()
 
+
+                //Affichage du prix total//
                 // Calcul de la somme des valeurs présentes dans le tableau "prixTotal" et injection du résultat dans le DOM
                 function totalPriceCanape() {
-                    //Aller chercher les prix dans le panier//
                     //méthode Reduce : calculer le prix cumulée
                     //accumulator : prix cumulé , currentValue : nouveau prix ajouté
-                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
                     //reduce = méthode, prix total cumulé de tous les produits ajouté, parameter : accumulatedTotalPRice //
+                    const reducer = (accumulator, currentValue) => accumulator + currentValue;
                     let getAccumulatedTotalPrice = totalProductPrice.reduce(reducer);
                     // injection du prix //
                     document.querySelector('#totalPrice').innerHTML = getAccumulatedTotalPrice;
@@ -108,18 +121,23 @@ fetch('http://localhost:3000/api/products/')
 
 
             function deleteProductDansPanier() {
+                //Créer un tableau vide 
                 let creatArrayMultiProducts = [];
-
+                //Récupère les class=deleteItem avec une variable
                 let getAllDeleteBtn = document.querySelectorAll(".deleteItem");
 
-                //callback "supprim"//
+                //Utiliser une méthode, foreach() : permet d'exécuter une fonction donnée sur chaque élément du tableau //
+                //la méthode va fonctionner avec une fonction suivante : 
                 getAllDeleteBtn.forEach((callbackDelete) => {
+                    // Créer un énélèvement "click" //
                     callbackDelete.addEventListener("click", () => {
                         //.closest : méthode , recherche les parents plus proches //
                         let findProductToDeleteUnderArticle = callbackDelete.closest("article");
-                        //Renommer les produits dans LS "savedProductinLocalStorage"//
+                        //Créer una variable "savedProductinLocalStorage"  pour le tableau produitDansLocalStorage//
                         let savedProductinLocalStorage = produitDansLocalStorage.length;
-                        //Si la quantité du produit dans le Panier est 1, on supprime le produit du Panier //
+                        console.log(produitDansLocalStorage);
+                        console.log("produitDansLocalStorage", "a");
+                        //Si la quantité du produit dans le Panier n'est pas vide, on supprime le produit du Panier //
                         if (savedProductinLocalStorage == 1) {
                             //removeItem() : méthode, méthode de l'interface Storage, on lui passe une clé en argument, la méthode va supprimer la ressource avec le nom de clé correspondant du storage.//
                             return (localStorage.removeItem("canapes")),
@@ -162,14 +180,19 @@ fetch('http://localhost:3000/api/products/')
             // possibilite : Saisir 0 dans la quantité
             // méthode, Créer une variable qui retournera les éléments trouvés correspondant à ".itemQuantity"//
             let zeroQuantity = document.querySelectorAll(".itemQuantity");
-            //utiliser forEach() pour exécuter une fonction ddonnée sur chaque élément du tableau//
+            //utiliser forEach() pour exécuter une fonction données sur chaque élément du tableau//
+            //callback : Une fonction de rappel est une fonction passée 
+            //dans une autre fonction en tant qu'argument, qui est ensuite invoquée à l'intérieur 
+            //de la fonction externe pour accomplir une sorte de routine ou d'action.
+            // callback: 함수에 파라미터로 들어가는 함수로 순차적으로 실행하고 싶을 때 사용
             zeroQuantity.forEach((callbackZeroQuantity) => {
+                // () 는 콜백함수임
                 callbackZeroQuantity.addEventListener("change", () => {
                     //Déclarer une variable pour exécuter une recherche la balise parent <article>
                     let rechercheIdToDelete = callbackZeroQuantity.closest("article");
                     //créer une varible pour calculer un nombre de type de canapées présents dans le tableau produitDansLocalStorage //
                     let savedProductNumber = produitDansLocalStorage.length;
-                    //Si la valeur saisis est 0 et qu'un seul type de canapé est présent dans LS
+                    //Si la valeur saisie est 0 et qu'un seul type de canapé est présent dans LS
                     if (callbackZeroQuantity.value == 0 && savedProductNumber == 1) {
                         //supression de la clé "canapé" du LS//
                         return (localStorage.removeItem("canapes")),
@@ -187,9 +210,12 @@ fetch('http://localhost:3000/api/products/')
                         location.reload();
                     }
                     // Modifier la quantité dans la case saisie//
+                    // si la quantité est supérieure à 0, 
                     else if (callbackZeroQuantity.value > 0) {
                         for (i = 0; i < produitDansLocalStorage.length; i++) {
+                            //s'il s'agit d'un canapé du même id + du même canapé de même couleur,
                             if (rechercheIdToDelete.dataset.id == produitDansLocalStorage[i]._id && rechercheIdToDelete.dataset.color == produitDansLocalStorage[i].couleur) {
+                                // on converti en nombre la valeur de la quantité du canapé  
                                 produitDansLocalStorage[i].quantite = parseInt(callbackZeroQuantity.value);
                                 if (produitDansLocalStorage[i].quantite <= 0 || produitDansLocalStorage[i].quantite >= 101) {
                                     alert("Veuillez entrer une valeur entre 1 et 100");
@@ -206,36 +232,21 @@ fetch('http://localhost:3000/api/products/')
             //calcul de la quantité totale d'articles présents dans le panier
             let totalArticlePresent = [];
             for (i = 0; i < produitDansLocalStorage.length; i++) {
+                //on crée une variable pour la quantité du canapé dans LS
                 let totalNumberCanape = produitDansLocalStorage[i].quantite;
+                //on envoie la quantité total dans LS
                 totalArticlePresent.push(totalNumberCanape);
+                // console.log(totalArticlePresent, "a");
 
             }
-
+            // Méhotde reducer : applique une fonction qui est un accumulateur qui traite chaque valeur d'une liste afin de la réduire à une seule valeur
+            // on additionne tous les prix existant dans LS
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
             const totalCanapes = totalArticlePresent.reduce(reducer);
             document.querySelector('#totalQuantity').innerHTML = totalCanapes;
 
-
-
-            // Si la commande totale dans LS est supérieure à 100, on bloque,
-            // 로컬스토리지에 이미 존재하는 같은 아이템의 수량이 새로 추가 되는 같은 아이템의 수량의 합이 100이 넘을 경우, return 값을 alert null
-
-            // function BlockTotalQuantityOver (){
-            //     for (i = 0; i < productInfo.length; i++) {
-            //         let newAddingProduct = productInfo[i].quantite;
-            //         let totalNumberProduct = produitDansLocalStorage.quantite
-            //         let totalAddedProductInLs = parse(totalNumberProduct) + parse(newAddingProduct);
-            //             if(totalAddedProductInLs > 100) {
-            //                 alert("non");
-            //             }
-            //     }
-            // } console.log("BlockTotalQuantityOver");
-            //     console.log(BlockTotalQuantityOver);
-            //     BlockTotalQuantityOver();
-
         }
 
-        // il faut modifier la fonction modification car elle ne fonctionne pas correctement//
         //---------------------------------Fin quantité-----------------------------------//
 
 
@@ -280,21 +291,8 @@ fetch('http://localhost:3000/api/products/')
 
         //Event au click
         btn_order.addEventListener("click", (e) => {
+            //méthode, si l'évènement n'est pas explicitement géré, l'action par défaut ne devrait pas être exécuté comme elle l'est 
             e.preventDefault();
-
-            // Création d'une classe pour fabriquer l'objet dans lequel iront les values du formulaire
-            class Form {
-                constructor() {
-                    this.firstName = first_name.value;
-                    this.lastName = last_name.value;
-                    this.address = address.value;
-                    this.city = city.value;
-                    this.email = e_mail.value;
-                }
-            }
-
-            //Appel de l'instance de classe Formulaire pour créer l'objet FORM_VALUE
-            const FORM_VALUE = new Form();
 
             // Const regEx pour le formulaire
             const REG_EX_FIRST_LAST_NAME = (value) => {
@@ -310,9 +308,25 @@ fetch('http://localhost:3000/api/products/')
                 return /^[a-zA-Z0-9._-]+[@]{1}[a-zA-Z0-9._-]+[.]{1}[a-z]{2,40}$/.test(value);
             };
 
+            // Création d'une classe pour fabriquer l'objet dans lequel iront les values du formulaire
+            // utiliser class pour créer des objets ayants propriétés
+            class Form {
+                constructor() {
+                    this.firstName = first_name.value;
+                    this.lastName = last_name.value;
+                    this.address = address.value;
+                    this.city = city.value;
+                    this.email = e_mail.value;
+                }
+            } 
+
+            //Appel de l'instance de classe Formulaire pour créer l'objet instanceFormulaire
+            //Une méthode d'instance est une fonction faisant partie d'une classe, et qui agit sur une instance de cette classe
+            const instanceFormulaire = new Form();
+
             //Control de la validité FirstName
             function firstNameControl() {
-                let name_input = FORM_VALUE.firstName;
+                let name_input = instanceFormulaire.firstName;
                 if (REG_EX_FIRST_LAST_NAME(name_input)) {
                     firstNameErrorMessage.innerHTML = "";
                     return true;
@@ -325,7 +339,7 @@ fetch('http://localhost:3000/api/products/')
 
             //Control de la validité lastName
             function lastNameControl() {
-                let last_name_input = FORM_VALUE.lastName;
+                let last_name_input = instanceFormulaire.lastName;
                 if (REG_EX_FIRST_LAST_NAME(last_name_input)) {
                     lastNameErrorMessage.innerHTML = "";
                     return true;
@@ -338,7 +352,7 @@ fetch('http://localhost:3000/api/products/')
 
             //Control de la validité address
             function addressControl() {
-                let address_input = FORM_VALUE.address;
+                let address_input = instanceFormulaire.address;
                 if (REG_EX_ADDRESS(address_input)) {
                     addressErrorMessage.innerHTML = "";
                     return true;
@@ -351,7 +365,7 @@ fetch('http://localhost:3000/api/products/')
 
             //Control de la validité city
             function cityControl() {
-                let city_input = FORM_VALUE.city;
+                let city_input = instanceFormulaire.city;
                 if (REG_EX_CITY(city_input)) {
                     cityErrorMessage.innerHTML = "";
                     return true;
@@ -364,7 +378,7 @@ fetch('http://localhost:3000/api/products/')
 
             //Control de la validité email
             function emailControl() {
-                let email_input = FORM_VALUE.email;
+                let email_input = instanceFormulaire.email;
                 if (REG_EX_E_MAIL(email_input)) {
                     emailErrorMessage.innerHTML = "";
                     return true;
@@ -382,21 +396,23 @@ fetch('http://localhost:3000/api/products/')
                 adress_valid = addressControl(),
                 city_valid = cityControl(),
                 email_valid = emailControl();
-            if (
-                !firstname_valid ||
-                !lastname_valid ||
-                !adress_valid ||
-                !city_valid ||
-                !email_valid
-            ) {
-                return null;
-            } else {
-                let products = [];
-
-                let produitDansLocalStorage = JSON.parse(localStorage.getItem("canapes"));
-                for (let selectedArticle of produitDansLocalStorage) {
-                    products.push(selectedArticle._id);
-                }
+                // s'il y a une erreur , on ne valide pas le formulaire
+                if (
+                    !firstname_valid ||
+                    !lastname_valid ||
+                    !adress_valid ||
+                    !city_valid ||
+                    !email_valid
+                ) 
+                    {
+                    return null;
+                    // si le formularie est validé, on envoie l'article vers le erveur , on crée un array products
+                    } else {
+                        let products = [];
+                        let produitDansLocalStorage = JSON.parse(localStorage.getItem("canapes"));
+                        for (let selectedArticle of produitDansLocalStorage) {
+                            products.push(selectedArticle._id);
+                        }
 
                 // Envoie de l'objet order vers le serveur
                 fetch("http://localhost:3000/api/products/order", {
@@ -405,12 +421,14 @@ fetch('http://localhost:3000/api/products/')
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        contact: FORM_VALUE,
+                        contact: instanceFormulaire,
                         products: products,
                     }),
                 }).then(async (response) => {
                     try {
+                        // await, permet d'attendre la résolution d'une promesse.
                         const POST_ORDER = await response.json();
+                        //envoyer une variable .orderId comme indiqué 
                         let orderId = POST_ORDER.orderId;
 
                         //Clear le LS
