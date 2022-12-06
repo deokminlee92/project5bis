@@ -11,7 +11,7 @@ fetch('http://localhost:3000/api/products')
         if (reponse.ok) {
             return reponse.json();
         }
-    })
+    }) 
     /*Paramètre : données */
     .then(function (productInfo) {
         // Récupération de l'ID dans l'url

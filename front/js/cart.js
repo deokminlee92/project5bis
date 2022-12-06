@@ -135,8 +135,6 @@ fetch('http://localhost:3000/api/products/')
                         let findProductToDeleteUnderArticle = callbackDelete.closest("article");
                         //Créer una variable "savedProductinLocalStorage"  pour le tableau produitDansLocalStorage//
                         let savedProductinLocalStorage = produitDansLocalStorage.length;
-                        console.log(produitDansLocalStorage);
-                        console.log("produitDansLocalStorage", "a");
                         //Si la quantité du produit dans le Panier n'est pas vide, on supprime le produit du Panier //
                         if (savedProductinLocalStorage == 1) {
                             //removeItem() : méthode, méthode de l'interface Storage, on lui passe une clé en argument, la méthode va supprimer la ressource avec le nom de clé correspondant du storage.//
@@ -189,12 +187,12 @@ fetch('http://localhost:3000/api/products/')
                 // () 는 콜백함수임
                 callbackZeroQuantity.addEventListener("change", () => {
                     //Déclarer une variable pour exécuter une recherche la balise parent <article>
-                    let rechercheIdToDelete = callbackZeroQuantity.closest("article");
+                    let rechercheIdToModify = callbackZeroQuantity.closest("article");
                     //créer une varible pour calculer un nombre de type de canapées présents dans le tableau produitDansLocalStorage //
                     let savedProductNumber = produitDansLocalStorage.length;
                     //Si la valeur saisie est 0 et qu'un seul type de canapé est présent dans LS
                     if (callbackZeroQuantity.value == 0 && savedProductNumber == 1) {
-                        //supression de la clé "canapé" du LS//
+                        //supression de la clé "canapé" du LS///Users/deokminlee/Desktop/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html
                         return (localStorage.removeItem("canapes")),
                             location.reload()
                     }
@@ -202,7 +200,7 @@ fetch('http://localhost:3000/api/products/')
                     else if (callbackZeroQuantity.value == 0 && savedProductNumber > 1) {
                         // Création d'un filtre "cana" pour récupérer les canapés dont l'id ou la couleur sont différents du type 
                         creatArrayMultiProducts = produitDansLocalStorage.filter((cana) => {
-                            if (rechercheIdToDelete.dataset.id != cana._id || rechercheIdToDelete.color != cana.couleur) {
+                            if (rechercheIdToModify.dataset.id != cana._id || rechercheIdToModify.color != cana.couleur) {
                                 return true;
                             }
                         });
@@ -214,7 +212,7 @@ fetch('http://localhost:3000/api/products/')
                     else if (callbackZeroQuantity.value > 0) {
                         for (i = 0; i < produitDansLocalStorage.length; i++) {
                             //s'il s'agit d'un canapé du même id + du même canapé de même couleur,
-                            if (rechercheIdToDelete.dataset.id == produitDansLocalStorage[i]._id && rechercheIdToDelete.dataset.color == produitDansLocalStorage[i].couleur) {
+                            if (rechercheIdToModify.dataset.id == produitDansLocalStorage[i]._id && rechercheIdToModify.dataset.color == produitDansLocalStorage[i].couleur) {
                                 // on converti en nombre la valeur de la quantité du canapé  
                                 produitDansLocalStorage[i].quantite = parseInt(callbackZeroQuantity.value);
                                 if (produitDansLocalStorage[i].quantite <= 0 || produitDansLocalStorage[i].quantite >= 101) {
@@ -405,6 +403,7 @@ fetch('http://localhost:3000/api/products/')
                     !email_valid
                 ) 
                     {
+                    alert("Veuillez remplir les champs de saisir")
                     return null;
                     // si le formularie est validé, on envoie l'article vers le erveur , on crée un array products
                     } else {
@@ -443,41 +442,3 @@ fetch('http://localhost:3000/api/products/')
         })
         // last fermeture
     })
-
-
-
-
-
-/* -----------------------개념정리=--------------------------
-//element.closet() : permettre de cibler le produit que vs souhaitez supprimer où dont vs souhaitez modifier la quantité
-//grâce à son identifiant et sa couleur//
-
-//forEach() : méthode, permet d'exécuter une fonction donnée sur chaque élément du tableau//
-//syntaxe : arr.forEach(callback);
-//syntaxe : arr.forEach(callback, thisArg);
-
-*/
-//element.addEventListener(event, handler); /
-
-
-
-
-// page produit , panier , mettre en oeuvre quantité +100
-// modification quantité , +100 à bloquer
-// regex,,, même si le fourmulaire est rempli,  si je n'ai pas de produit, bloquer la commande //
-
-
-
-// /* expliquer ce que c'est le plan de test , prendre un exemple pour montrer ,
-// // pourquoi j'ai codé comme ça ? , pourquoi pas d'autre moyens ?
-// // Comment présenter le P5,
-// // rappel du contexte, montrer le site en direct , on montre catalogue, choisir un canap, choisir une couleur sans quantité en fait tt les possibilités ,
-// // envoi localstorage également tt les possibilités, (ex, au dessus de 100, )
-// // panier ( 2 lignes même canap avec 2 lignes diffé )
-// // modif, suppression
-// // champs de saisies alerte , alerte , si bien fonctionne , tt les possibilités de bloquer
-// // une fois commandé, LS doit être vide
-// // plan de test à expliquer : à suivre l'ordre du fichier
-// // Expliquer le code : script : remonter de catalogue , produit : surtout LS, , Panier : tt les functionalités , envoi du formulaire
-// // si je fais PowerPoint : pour le code , à mettre l'accent sur les points
-// / PW :si je le fais;  à mettre des mots clés ++ grands axes à expliquer
